@@ -23,11 +23,20 @@
             text-align: center;
             width: 350px;
         }
-        h2 { margin-bottom: 10px; color: #333; }
-        p { color: #666; font-size: 14px; margin-bottom: 30px; }
-        
-        /* This is where the button will appear */
-        #g_id_onload { display: none; }
+        h2 { 
+            margin-bottom: 10px; 
+            color: #333; 
+        }
+        p { 
+            color: #666; 
+            font-size: 14px; 
+            margin-bottom: 30px; 
+        }
+        #buttonDiv {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -41,22 +50,17 @@
 
     <script>
         function handleCredentialResponse(response) {
-            console.log("Encoded JWT ID token: " + response.credential);
-            // Decode the token to get user info (email, name, picture)
             const responsePayload = decodeJwtResponse(response.credential);
             
-            console.log("ID: " + responsePayload.sub);
-            console.log('Full Name: ' + responsePayload.name);
-            console.log('Given Name: ' + responsePayload.given_name);
-            console.log('Family Name: ' + responsePayload.family_name);
-            console.log("Image URL: " + responsePayload.picture);
-            console.log("Email: " + responsePayload.email);
+  
+            localStorage.setItem("user_email", responsePayload.email);
+            localStorage.setItem("user_name", responsePayload.name);
+            localStorage.setItem("user_picture", responsePayload.picture);
 
-            // TODO: Redirect to the main app (periodic table) after successful login
-            // window.location.href = "periodic_table.html"; 
+
+            window.location.href = "periodic_table.html"; 
         }
 
-        // Helper function to decode the JWT token
         function decodeJwtResponse(token) {
             var base64Url = token.split('.')[1];
             var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -68,17 +72,16 @@
 
         window.onload = function () {
             google.accounts.id.initialize({
-                // REPLACE THIS WITH YOUR ACTUAL CLIENT ID FROM GOOGLE CLOUD
-                client_id: "679864618123-6muhu90ulm1ln14532i0iia7d2p9m0pd.apps.googleusercontent.com",
+     
+                client_id: "79864618123-6muhu90ulm1ln14532i0iia7d2p9m0pd.apps.googleusercontent.com",
                 callback: handleCredentialResponse
             });
             google.accounts.id.renderButton(
                 document.getElementById("buttonDiv"),
-                { theme: "outline", size: "large", width: 250 }  // Customization
+                { theme: "outline", size: "large", width: 250 }  
             );
-            google.accounts.id.prompt(); // specific to the prompt
+            google.accounts.id.prompt(); 
         }
     </script>
 </body>
-
 </html>
